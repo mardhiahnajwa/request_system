@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{%block head%}
+<title>My Booklist</title>
+{%endblock%}
+
+{%block body%}
+<div class="content">
+    <header>
+        <h1>Welcome to my Booklist!</h1>
+    </header>
+    <table>
+        <tr>
+            <th>Books</th>
+            <th>Author</th>
+            <th>Category</th>
+            <th>Action</th>
+        </tr>
+        {%for book in all_books%}
+            <tr>
+                <td>{{book.name}}</td>
+                <td>{{book.author}}</td>
+                <td>{{book.category}}</td>
+                <td>
+                    <a href="/delete/{{book.id}}">Delete</a>
+                    <br>
+                    <a href="/update/{{book.id}}">Update</a>
+                </td>
+            </tr>
+        {%endfor%}
+    </table>
+    <div class="form">
+        <form action='/' method='POST'>
+            <input type='text' name='name' id='name'>
+            <input type='text' name='author' id='author'>
+            <input type='text' name='category' id='category'>
+            <input type='submit' value="Add Book">
+        </form>
+    </div>
+</div>
+{%endblock%}

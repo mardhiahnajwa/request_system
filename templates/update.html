@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{%block head%}
+<title>My Booklist</title>
+{%endblock%}
+
+{%block body%}
+<div class="content">
+    <header>
+        <h1>Update Book</h1>
+    </header>
+  
+    <div class="form">
+        <form action='/update/{{book.id}}' method='POST'>
+            <input type='text' name='name' id='name' value='{{book.name}}'>
+            <input type='text' name='author' id='author' value='{{book.author}}'>
+            <input type='text' name='category' id='category' value='{{book.category}}'>
+            <input type='submit' value="Update Book">
+        </form>
+    </div>
+</div>
+{%endblock%}

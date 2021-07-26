@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="X-UA-Compatible" content="ie-edge"> <!-- to connect with the virtual environment -->
+        <link rel="stylesheet" href="{{url_for('static', filename='css/main.css')}}">
+        {% block head%}{% endblock  %}
+    </head>
+    <body>
+        {% block  body%}{% endblock  %}
+    </body>
+</html>
