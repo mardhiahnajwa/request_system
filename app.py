@@ -6,65 +6,58 @@
 - Update a book
 - Delete a book using Flask.
 '''
-from flask import Flask, render_template, request
-from werkzeug.utils import redirect
-from flask_sqlalchemy import SQLAlchemy
+from flask import Flask, render_template, request, jsonify
+from flask import json
 
 app=Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI']='sqlite:///data.db'
-db=SQLAlchemy(app)
 
-class Books(db.Model):
-    id=db.Column(db.Integer, primary_key=True)
-    name=db.Column(db.String(120), unique=True, nullable=False)
-    author=db.Column(db.String(120), unique=True, nullable=False)
-    category=db.Column(db.String(120), unique=True, nullable=False)
+all_books=[
+    {
+        "author":"Emma Donoghue",
+        "book":["Asylum","Sanctum"],
+        "genre":"horror"
+    },
+    {
+        "author" : "Stephen King",
+        "book" : ["Thinner", "The Shinning"],
+        "genre" :"thriller"
+    },
+    {
+        "author" : "Micheal Grant",
+        "book" : ["Bzrk", "Bzrk Reloaded"],
+        "genre" : "science fiction"
+    }
+]
 
-    def __repr__(self):
-        return '<Books %r>' %self.id
 
-@app.route('/', methods=['POST', 'GET']) #add book &more book
-def index(): 
-    if request.method == 'POST':
-        book_name = request.form['name']
-        book_author= request.form['author']
-        book_category = request.form['category']
-        new_book = Books(name=book_name, author=book_author, category=book_category)
+@app.route('/')
+def home():
+    return jsonify({'message':'hello world'})
 
-        try:
-            db.session.add(new_book)
-            db.session.commit()
-            return redirect('/')
-        except:
-            return 'Cannot add book'
-    else:
-        all_books = Books.query.order_by(Books.name).all()
-        return render_template('index.html', all_books=all_books)
+@app.route('/books', methods=['GET']) #give all books in list
+def allbooks():
+    return jsonify(all_books)
 
-@app.route('/delete/<int:id>') #delete book
-def delete(id):
-    delete_book = Books.query.get_or_404(id)
-    try:
-        db.session.delete(delete_book)
-        db.session.commit()
-        return redirect('/')
-    except:
-        return 'Cannot delete book'
+@app.route('/books/<int:id>', methods=['GET']) #give only one book, according to id
+def onebook(id):
+    return jsonify(all_books[id])
 
-@app.route('/update/<int:id>', methods=['GET', 'POST']) #update book
-def update(id):
-    update_book = Books.query.get_or_404(id)
-    if request.method=='POST':
-        update_book.name = request.form['name']
-        update_book.author=request.form['author']
-        update_book.category = request.form['category']
-        try:
-            db.session.commit()
-            return redirect('/')
-        except:
-            return 'Cannot update book'
-    else:
-        return render_template('update.html', book=update_book)
+@app.route('/books', methods= ['POST']) #create more books
+def add_new_book():
+    new_book = request.get_json()
+    all_books.append(new_book)
+    return jsonify(all_books)
+
+@app.route('/books/<int:id>', methods=['DELETE']) #to delete specific book, using id
+def delete_book(id):
+    del all_books[id]
+    return jsonify(all_books)
+        
+@app.route('/books/<int:id>', methods=['PUT'])
+def update_book(id):
+    updated_book = request.get_json()
+    all_books[id] = updated_book
+    return jsonify(all_books)
 
 #if want to see error display on webpage, or automatically saved on web, do this
 if __name__=='__main__':
